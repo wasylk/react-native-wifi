@@ -28,6 +28,20 @@ RCT_EXPORT_METHOD(connectToSSID:(NSString*)ssid
     }
 }
 
+// From react-native-wifi-hive
+RCT_EXPORT_METHOD(getWifiList:(RCTResponseSenderBlock)callback) {
+    NSMutableArray* result = [NSMutableArray new];
+    for (NEHotspotNetwork *hotspotNetwork in [NEHotspotHelper supportedNetworkInterfaces]) {
+        NSMutableDictionary* hotspot = [NSMutableDictionary new];
+        hotspot[@"SSID"] = hotspotNetwork.SSID;
+        hotspot[@"BSSID"] = hotspotNetwork.BSSID;
+        hotspot[@"isSecure"] = @(hotspotNetwork.secure);
+        hotspot[@"level"] = @(hotspotNetwork.signalStrength);
+        [result addObject:hotspot];
+    }
+    return callback(@[[NSNull null], result]);
+}
+
 RCT_EXPORT_METHOD(connectToProtectedSSID:(NSString*)ssid
                   withPassphrase:(NSString*)passphrase
                   isWEP:(BOOL)isWEP
