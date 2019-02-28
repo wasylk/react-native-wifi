@@ -1,6 +1,16 @@
-
-import { NativeModules } from 'react-native';
+import { NativeModules, Platform } from 'react-native';
 
 const { WifiManager } = NativeModules;
 
-export default WifiManager;
+export default Platform.OS === 'ios' ?
+    {
+        ...WifiManager,
+        loadWifiList: function (resolve, reject) {
+            WifiManager.getWifiList((err, list) => {
+                if (err) {
+                    return reject(err);
+                }
+                resolve(JSON.stringify(list));
+            });
+        }
+    } : WifiManager;
